@@ -156,6 +156,13 @@ To use a different email provider, replace `sendWithResend` in `src/lib/server/e
 2. Add the environment variables from `.env.example` for Production. Add them for Preview too, with `NEXT_PUBLIC_ALLOW_INDEXING=false`.
 3. Deploy, then submit a test enquiry and confirm it reaches the sales inbox.
 
+**AWS Amplify**
+
+1. In the Amplify console, choose **Create new app**, then **GitHub**, and pick this repository and the `main` branch.
+2. The build uses [`amplify.yml`](amplify.yml) (Node 22, `npm ci`, `npm run build`). Keep it as it is.
+3. Add the environment variables from `.env.example` under **Hosting → Environment variables**. `amplify.yml` copies the `RESEND_*`, `ENQUIRY_*` and `NEXT_PUBLIC_*` variables into `.env.production` during the build, so the enquiry API can read them at runtime. **Redeploy after changing any variable.**
+4. Deploy, then add your domain under **Hosting → Custom domains**.
+
 **Any Node host**
 
 ```bash
