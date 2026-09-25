@@ -1,188 +1,117 @@
-# Simply Paper — corporate website
+# Verdioera — Static HTML website
 
 **Better Materials. Better Everyday Products.**
 
-This is the B2B website for Simply Paper, a manufacturing-led business making paper bags, tissue, hygiene products, thermal rolls and kitchen rolls, with an innovation pipeline of alternative-material products. The site builds credibility, presents the catalogue and turns visits into qualified enquiries. It is **not** an e-commerce store.
-
-Built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4, React Hook Form, Zod and Lucide.
+A single-file, self-contained HTML website for **Verdioera Sustainable Solutions** — a
+manufacturing-led B2B business making paper packaging, tissue & hygiene products, thermal
+rolls, food packaging and next-generation biodegradable products. The site is plain HTML5 +
+CSS + vanilla JS. **No frameworks, no build step, no server.**
 
 ---
 
-## Quick start
+## Spec
+
+### Stack
+- One file: `index.html` at the repo root.
+- Inline CSS (design tokens, responsive layout) and inline vanilla JS.
+- All imagery is embedded as base64 data URIs — the site has zero external asset dependencies and never shows a broken image.
+- Hosts anywhere static files are served (Vercel, Netlify, GitHub Pages, AWS S3, any web server).
+
+### Page sections
+| Section | What it does |
+| --- | --- |
+| Header / nav | Fixed nav with anchor links + "Contact" CTA |
+| Hero | Brand statement, tagline, primary/secondary CTAs |
+| Problem | The market problem in 4 cards |
+| Manufacturing | "Manufacturer first" differentiator with 3 promises |
+| Products | 10 product families in a horizontal-scroll row; each family has expandable sub-products and a "Request a quote →" link that preselects the RFQ product |
+| Manufacturing flow | 5-step material → B2B supply diagram |
+| RFQ / Request for quotation | Working enquiry form (see below) |
+| Cost calculator | Indicative quantity × rate calculator feeding the RFQ CTA |
+| Partner | 3 partnership categories |
+| FAQ | 10 questions using native `<details>/<summary>` |
+| Social | 4 social card placeholders |
+| CTA / Contact | "Start a conversation" mailto link |
+| Footer | Brand + tagline |
+| Quick Chat | Floating widget with links to products, RFQ, calculator, email, partnerships |
+
+### Product families
+Paper Bags · Custom Printed & Premium Bags · Tissue & Hygiene Products · Billing &
+Thermal Rolls · Food Packaging Essentials · Table & Kitchen Rolls · Biodegradable Cutlery ·
+Bagasse Tableware · Paddy Husk Products · Edible Products · Areca Products
+
+### Enquiry workflow (the form actually works)
+The RFQ form posts to **FormSubmit** (`https://formsubmit.co/ajax/business@verdioera.com`)
+using its client-side AJAX endpoint, so enquiries reach an inbox with **no backend code**:
+
+1. First submission triggers a one-time **activation email** from FormSubmit — click it to
+   confirm `business@verdioera.com` and enable delivery.
+2. After that, every RFQ lands in that inbox as a table-formatted email with the subject
+   `New RFQ — Verdioera website`.
+3. The form has a loading state ("Sending…"), a success message, and an error fallback that
+   directs the visitor to `business@verdioera.com`.
+
+> **To change the receiving inbox:** replace `business@verdioera.com` in the
+> `fetch('https://formsubmit.co/ajax/…')` call inside the `<script>` block of `index.html`
+> (search for `formsubmit`). Re-confirm the activation email the first time it is used.
+> Other form backends (Web3Forms, Formspree, a CRM/webhook) can be swapped in by editing
+> the same fetch call — the rest of the form logic stays the same.
+
+### Rate limiting / spam notes
+- HTML-only site has no server-side rate limiting or honeypot.
+- FormSubmit provides basic anti-spam/captcha options (`_captcha`, `_honeypot`, `_template`)
+  that can be added as `FormData` entries in the submit handler if spam becomes an issue.
+
+---
+
+## Plan
+
+- **Phase 1 — Replace** the legacy Next.js app. The old codebase and its BRD/PRD docs are
+  archived (not deleted) under [`_archive/legacy-nextjs/`](_archive/legacy-nextjs/).
+- **Phase 2 — Site** — bring the single-page Verdioera HTML into the repo as `index.html`.
+- **Phase 3 — Enquiries** — wire the RFQ form to a real delivery channel (FormSubmit) with
+  loading / success / error states.
+- **Phase 4 — Docs** — rewrite this README as the spec, plan and task list.
+- **Phase 5 — Verify** — confirm the page renders and the form posts correctly.
+- **Phase 6 — Deploy** — push to GitHub and import into a static host. No environment
+  variables are required.
+
+---
+
+## Task list
+
+- [x] Archive legacy Next.js app under `_archive/legacy-nextjs/`
+- [x] Add `index.html` (Verdioera single-page site) at repo root
+- [x] Give every RFQ field a `name` attribute for the form backend
+- [x] Wire RFQ form to FormSubmit → emails `business@verdioera.com`
+- [x] Add loading, success and error states to the RFQ form
+- [x] Rewrite README as spec + plan + tasks
+- [x] Verify `index.html` loads and the inline JS parses
+- [ ] Owner: confirm the FormSubmit activation email (first test submission)
+- [ ] Owner: point the social card placeholders at live profiles
+- [ ] Deploy to a static host and run a live end-to-end RFQ test
+
+---
+
+## Run / deploy
+
+There is nothing to build or install:
 
 ```bash
-npm install
-cp .env.example .env.local      # then edit values
-npm run dev                     # http://localhost:3000
+# local preview (any static server)
+python3 -m http.server 8080     # then open http://localhost:8080
+# or
+npx serve .
 ```
 
-To try the enquiry form locally without an email provider, set `ENQUIRY_DEV_LOG=true` in `.env.local`. Submissions are then printed to the terminal, and the success screen says clearly that nothing was emailed.
+### AWS Amplify (console)
 
-### Scripts
+1. Push this repo to GitHub (`main` branch).
+2. Amplify console → **Create new app** → **Host web app** → **GitHub**, pick this repository and the `main` branch.
+3. Amplify auto-detects [`amplify.yml`](amplify.yml). Keep it as-is — it performs **no build** and serves the repo root, so `index.html` is the site.
+4. Create the app, then under **Hosting → Custom domains** attach your domain. Until then, the site is live on Amplify's default domain (`https://main.<branch-id>.amplifyapp.com`).
+5. Submit a test RFQ on the live site and confirm the FormSubmit activation email arrives at `business@verdioera.com` (see "Enquiry workflow" above).
 
-| Command             | Purpose                        |
-| ------------------- | ------------------------------ |
-| `npm run dev`       | Development server             |
-| `npm run build`     | Production build               |
-| `npm start`         | Serve the production build     |
-| `npm run lint`      | ESLint (Next.js + TypeScript)  |
-| `npm run typecheck` | `tsc --noEmit`                 |
+### Any static host
 
----
-
-## Project structure
-
-```
-src/
-  app/                      Routes (server components by default)
-    page.tsx                Home
-    about/ products/ products/[slug]/ innovation/ manufacturing/
-    industries/ build-with-us/ contact/ privacy/ terms/
-    api/enquiry/route.ts    Enquiry API (validation, spam checks, rate limit, delivery)
-    sitemap.ts robots.ts opengraph-image.tsx icon.svg
-  components/
-    ui/                     Design system primitives (Container, Section, Button, typography, StatusBadge, Pending)
-    layout/                 Header, mobile navigation (native <dialog>), footer, logo
-    sections/               Page building blocks (PageHero, CtaBand, cards, PhilosophySteps…)
-    media/                  MediaFrame + illustrated ProductArt
-    forms/                  EnquiryForm (client) and Field
-    products/               Catalogue with industry filter (client)
-  lib/
-    config/company.ts       ← All business facts (contact, facility, legal). Unconfirmed = null.
-    config/site.ts          Site URL, navigation, indexing flag
-    data/                   products, innovation, industries, services, enquiry options
-    validation/enquiry.ts   Shared Zod schema (client + server)
-    server/                 Enquiry delivery (Resend / webhook) and rate limiter
-    seo.ts                  Metadata + JSON-LD helpers
-```
-
-Only interactive parts are client components: the header's active link state, the mobile menu, the catalogue filter and the enquiry form.
-
----
-
-## Content and configuration
-
-### Business information: `src/lib/config/company.ts`
-
-Every business fact lives here. Anything not yet confirmed is `null` or an empty array, and **nothing is ever faked**:
-
-- In production, `null` values are simply hidden. For example, the footer shows only "Send an enquiry" until an email or phone number is set.
-- On staging, set `NEXT_PUBLIC_SHOW_CONTENT_PLACEHOLDERS=true`. Each missing item then shows a dashed "To confirm: …" chip naming the file to edit.
-
-Fields: legal name, email, phone, WhatsApp, address, hours, social profiles, manufacturing model, locations, capacity statement, quality process, certifications, and legal review status and retention period.
-
-### Products: `src/lib/data/products.ts`
-
-Each product has an overview, applications, related industries, customisation options, an optional compliance note, SEO copy and a visual.
-
-- `specifications` is **empty on purpose**. Until Quality verifies values, the page lists `specParameters` (for example "Roll width") as "Confirmed at quotation". Add `{ label, value }` rows once they are approved, and the page switches to a specification table automatically.
-- Never add prices, stock status, capacities or certifications here.
-
-### Innovation: `src/lib/data/innovation.ts`
-
-All four items have `status: "under-development"` and appear with an "Under Development" badge everywhere. Keep claims (biodegradability, compostability, food safety) out of the copy until testing and certification are approved.
-
-### Industries and services
-
-`industries.ts` maps each sector to relevant products and pipeline items. `services.ts` defines the five Build With Us offers and the enquiry type each one preselects.
-
-### Imagery
-
-Photos of Simply Paper's own products were not available, so every visual is currently a flat, brand-palette **illustration** (`components/media/product-art.tsx`). This means the site never shows broken images or misleading stock photos. To switch to licensed photography:
-
-1. Add the optimised files to `public/images/products/`. Use a 4:5 ratio for cards and 4:3 or wider for heroes.
-2. Add an `image` to the item's `visual`:
-
-   ```ts
-   visual: {
-     art: "paper-bags",
-     artAlt: "…",
-     image: { src: "/images/products/paper-bags.jpg", alt: "Kraft paper bags with twisted handles", width: 2400, height: 3000, credit: "Photo: …, licensed to Simply Paper" },
-   }
-   ```
-
-`MediaFrame` then serves it through `next/image`, in AVIF or WebP at responsive sizes.
-
----
-
-## Enquiry workflow
-
-`/contact` accepts `?type=`, `?product=` and `?industry=` so that every CTA preselects the right options. For example, product pages link to `/contact?type=quote&product=thermal-rolls#enquiry`.
-
-**Client side:** React Hook Form with the shared Zod schema. It shows inline errors with `aria-invalid` and `aria-describedby`, and focuses the first invalid field. There is a loading state, an error alert that keeps what the user typed, and a success screen with a reference number. Expected quantity is optional for general, innovation and development enquiries.
-
-**Server side** (`src/app/api/enquiry/route.ts`):
-
-1. Same-origin check (403) and JSON-only requests (415)
-2. IP rate limit of 5 requests per 10 minutes (429 with a `Retry-After` header)
-3. Body size limit of 16 KB (413)
-4. Honeypot field and a minimum fill time of 3 seconds. Bots get a fake success, and nothing is delivered.
-5. Zod re-validation (422 with field errors)
-6. Delivery with a reference, timestamp, source page, product and consent record
-
-**Delivery channels.** Configure one or both:
-
-| Channel | Variables | Notes |
-| --- | --- | --- |
-| Email (Resend) | `RESEND_API_KEY`, `ENQUIRY_TO_EMAIL`, `ENQUIRY_FROM_EMAIL` | `reply_to` is set to the customer. The sender domain must be verified in Resend. |
-| Webhook | `ENQUIRY_WEBHOOK_URL`, `ENQUIRY_WEBHOOK_SECRET` | JSON POST for a CRM, Zapier, Make or n8n |
-
-If neither is configured, the contact page shows an honest "Online enquiries aren't connected yet" notice, the submit button is disabled, and the API returns 503. The site never pretends an enquiry was sent.
-
-To use a different email provider, replace `sendWithResend` in `src/lib/server/enquiry-delivery.ts`. The rest of the flow stays the same.
-
-> **Rate limiting note:** the limiter keeps its state in memory for each server instance. On serverless or multi-instance hosting, back it with a shared store such as Upstash Redis for strict limits. The API is in `src/lib/server/rate-limit.ts`.
-
----
-
-## SEO and accessibility
-
-- Unique titles and descriptions on every page, canonical URLs, Open Graph and Twitter cards, and generated OG images (a site-wide one plus one per product)
-- `sitemap.xml` and `robots.txt`. `NEXT_PUBLIC_ALLOW_INDEXING=false` blocks indexing on staging.
-- JSON-LD: an Organization on the homepage (only configured fields) and a BreadcrumbList on product pages
-- Semantic landmarks, a skip link, one `h1` per page, and visible focus rings
-- The mobile menu uses the native modal `<dialog>`: focus stays inside, Escape closes it, and focus returns to the button
-- Motion is limited to a short fade-in on load and hover transitions, and is turned off under `prefers-reduced-motion`
-- Brand text colours meet WCAG AA. Sage and kraft are used only for surfaces and decoration.
-- Security headers: `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and HSTS. `X-Powered-By` is removed.
-
----
-
-## Deployment
-
-**Vercel (recommended)**
-
-1. Import the repository into Vercel.
-2. Add the environment variables from `.env.example` for Production. Add them for Preview too, with `NEXT_PUBLIC_ALLOW_INDEXING=false`.
-3. Deploy, then submit a test enquiry and confirm it reaches the sales inbox.
-
-**AWS Amplify**
-
-1. In the Amplify console, choose **Create new app**, then **GitHub**, and pick this repository and the `main` branch.
-2. The build uses [`amplify.yml`](amplify.yml) (Node 22, `npm ci`, `npm run build`). Keep it as it is.
-3. Add the environment variables from `.env.example` under **Hosting → Environment variables**. `amplify.yml` copies the `RESEND_*`, `ENQUIRY_*` and `NEXT_PUBLIC_*` variables into `.env.production` during the build, so the enquiry API can read them at runtime. **Redeploy after changing any variable.**
-4. Deploy, then add your domain under **Hosting → Custom domains**.
-
-**Any Node host**
-
-```bash
-npm ci && npm run build && npm start   # serves on port 3000 (override with PORT)
-```
-
-Put it behind HTTPS. The rate limiter reads `x-forwarded-for`, so make sure your proxy sets it.
-
----
-
-## Before launch: still needed from the business
-
-- [ ] Logo files (the current mark is a placeholder), and the confirmed domain for `NEXT_PUBLIC_SITE_URL`
-- [ ] Contact details: sales email, phone, WhatsApp, address and hours (`company.ts`)
-- [ ] Legal entity name
-- [ ] Manufacturing model (owned, contract or hybrid), locations, and whether a capacity statement may be published
-- [ ] Certifications actually held and approved for publication
-- [ ] Verified specifications and customisation options for each product
-- [ ] Licensed product photography
-- [ ] An email provider (Resend account with a verified sending domain) and/or a CRM webhook, plus the authorised sales inbox
-- [ ] Privacy policy and terms reviewed by counsel, with the retention period set. Then set `company.legal.reviewed = true`.
-- [ ] An analytics provider (privacy-appropriate), if wanted. Update the privacy policy to match.
-- [ ] Company story, founders and history for the About page, if leadership wants them published
+Serve the repo root. No build command, no environment variables.
