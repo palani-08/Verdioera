@@ -24,9 +24,9 @@ backend code.** Free tier covers 250 enquiries/month.
 2. **Add it to the site:** in [`index.html`](index.html), search for
    `WEB3FORMS_ACCESS_KEY` (top of the `<script>`, under `CONFIG`) and paste your key.
    Commit and push.
-3. **Set the recipient email** (optional — it defaults to `palani7pavan@gmail.com`):
+3. **Set the recipient email** (optional — it defaults to `Info@verdioera.com`):
    Amplify console → app → **App settings → Environment variables** → add
-   `RFQ_EMAIL = you@example.com` → **Save → Redeploy**. Do not edit the file for this —
+   `RFQ_EMAIL = Info@verdioera.com` → **Save → Redeploy**. Do not edit the file for this —
    the build substitutes it automatically (see [`amplify.yml`](amplify.yml)).
 
 Every RFQ then arrives as an email with Name, Company, Email, Phone, Product, Quantity
@@ -44,9 +44,11 @@ and Requirement, subject `New RFQ — Verdioera website`.
    specification" radio appears, leave it on **Resolved from amplify.yml**.)
 5. Click **Create app / Save and deploy**. The first build takes ~1 minute.
 6. Open the generated URL (e.g. `https://main.dxxxxxxxx.amplifyapp.com`).
-7. Submit a **test RFQ** — you should receive it at `palani7pavan@gmail.com` (or your
-   `RFQ_EMAIL` env var value) within seconds. No activation click needed.
-8. Optional: attach your domain under **Hosting → Custom domains**.
+7. Submit a **test RFQ** — it arrives at `Info@verdioera.com` (or your `RFQ_EMAIL` env var
+   value) within seconds. No activation click needed.
+8. **Attach the client's domain:** under **Hosting → Custom domains** add
+   **verdioera.com** (and `www.verdioera.com`), then set the DNS records your registrar
+   asks for (usually a CNAME to the Amplify URL).
 
 ---
 
