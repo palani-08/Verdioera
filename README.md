@@ -14,16 +14,23 @@ rolls, food packaging and next-generation biodegradable products.
 
 ## How enquiries reach you (RFQ form)
 
-The RFQ form posts to **FormSubmit**, which emails each submission to your inbox. **No
-backend code.**
+The RFQ form posts to **Web3Forms**, which emails each submission to your inbox. **No
+backend code.** Free tier covers 250 enquiries/month.
 
-1. In [`index.html`](index.html), search for `RFQ_EMAIL` (top of the `<script>` block,
-   under `CONFIG`) and set it to your inbox — that's the **only** thing to change.
-2. After deploying, submit one test RFQ. FormSubmit emails a one-time **activation link**
-   to that inbox — click it once.
-3. From then on, every RFQ arrives there as a formatted email (subject
-   `New RFQ — Verdioera website`) with Name, Company, Email, Phone, Product, Quantity
-   and Requirement.
+**One-time setup (2 minutes):**
+
+1. **Get a Web3Forms access key:** open https://web3forms.com → enter the email you want
+   enquiries at → copy the access key from the email it sends you.
+2. **Add it to the site:** in [`index.html`](index.html), search for
+   `WEB3FORMS_ACCESS_KEY` (top of the `<script>`, under `CONFIG`) and paste your key.
+   Commit and push.
+3. **Set the recipient email** (optional — it defaults to `palani7pavan@gmail.com`):
+   Amplify console → app → **App settings → Environment variables** → add
+   `RFQ_EMAIL = you@example.com` → **Save → Redeploy**. Do not edit the file for this —
+   the build substitutes it automatically (see [`amplify.yml`](amplify.yml)).
+
+Every RFQ then arrives as an email with Name, Company, Email, Phone, Product, Quantity
+and Requirement, subject `New RFQ — Verdioera website`.
 
 ---
 
@@ -37,7 +44,8 @@ backend code.**
    specification" radio appears, leave it on **Resolved from amplify.yml**.)
 5. Click **Create app / Save and deploy**. The first build takes ~1 minute.
 6. Open the generated URL (e.g. `https://main.dxxxxxxxx.amplifyapp.com`).
-7. Submit a **test RFQ**, then click the **FormSubmit activation link** in your inbox.
+7. Submit a **test RFQ** — you should receive it at `palani7pavan@gmail.com` (or your
+   `RFQ_EMAIL` env var value) within seconds. No activation click needed.
 8. Optional: attach your domain under **Hosting → Custom domains**.
 
 ---

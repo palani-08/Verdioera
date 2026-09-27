@@ -4,7 +4,11 @@ frontend:
     preBuild:
       commands: []
     build:
-      commands: []
+      commands:
+        # Inject the RFQ recipient email from the Amplify env var RFQ_EMAIL
+        # (falls back to palani7pavan@gmail.com if unset). Set it under
+        # App settings -> Environment variables -> edit -> Save -> Redeploy.
+        - sed -i "s|__RFQ_EMAIL__|${RFQ_EMAIL:-palani7pavan@gmail.com}|g" index.html
   artifacts:
     baseDirectory: /
     files:
